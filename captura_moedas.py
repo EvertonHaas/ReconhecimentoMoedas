@@ -3,6 +3,7 @@ import cv2
 from image_processing import pre_process
 import numpy as np
 
+
 def processar_moedas(diretorio_imagens, diretorio_destino):
     if not os.path.exists(diretorio_destino):
         os.makedirs(diretorio_destino)

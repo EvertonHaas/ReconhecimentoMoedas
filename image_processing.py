@@ -17,16 +17,17 @@ def pre_process(img):
     return img_pre
 
 
+def custom_normalization(img):
+    return (img.astype(np.float32) / 127.0) - 1
+
+
 def detectar_moeda(img):
-    img_moeda = cv2.resize(img, (224, 224))
+    img_moeda = cv2.resize(img, (224, 224))  # Garante que o tamanho da imagem seja o mesmo usado no treinamento
     img_moeda = np.asarray(img_moeda)
-    img_moeda_normalize = (img_moeda.astype(np.float32) / 127.0) - 1
+    img_moeda_rgb = cv2.cvtColor(img_moeda, cv2.COLOR_BGR2RGB)  # Converte de BGR para RGB
+    img_moeda_normalize = custom_normalization(img_moeda_rgb)
 
-    cv2.imshow('IMG PRE', img_moeda_normalize)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    data[0] = img_moeda_normalize
+    data = np.array([img_moeda_normalize])  # Garante que a imagem esteja em um array representando um lote
     prediction = model.predict(data)
     index = np.argmax(prediction)
     percent = prediction[0][index]

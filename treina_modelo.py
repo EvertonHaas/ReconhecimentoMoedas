@@ -2,28 +2,36 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
-import numpy as np
+from image_processing import custom_normalization
+import os
+
+
+def contar_amostras(diretorio):
+    total_amostras = 0
+    # Percorre todos os subdiretórios e arquivos no diretório fornecido
+    for subdir, dirs, files in os.walk(diretorio):
+        for arquivo in files:
+            if arquivo.lower().endswith(('.png', '.jpg', '.jpeg')):
+                total_amostras += 1
+    return total_amostras
+
 
 def treinar_modelo():
     altura_imagem = 224  # Altura das imagens para o modelo
     largura_imagem = 224  # Largura das imagens para o modelo
     num_classes = 5  # Número de classes no seu dataset
     batch_size = 8  # Número de amostras processadas antes da atualização do modelo
-    num_epochs = 80  # Número de passagens completas pelo dataset
+    num_epochs = 40  # Número de passagens completas pelo dataset
 
     # Caminhos
     diretorio_treino = 'fotos/data/treino'  # Caminho para o diretório de treinamento
 
     # Número de Amostras
     # Você pode definir isso manualmente ou escrever um código para contar automaticamente
-    numero_de_amostras_treino = 115  # Substitua pelo número real de imagens de treino
-
-    def custom_normalization(img):
-        return (img.astype(np.float32) / 127.0) - 1
+    numero_de_amostras_treino = contar_amostras(diretorio_treino)
 
     train_datagen = ImageDataGenerator(
         preprocessing_function=custom_normalization
-        # outras configurações...
     )
 
     train_generator = train_datagen.flow_from_directory(
